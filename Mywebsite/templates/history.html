@@ -6,5 +6,27 @@
 
 
 {% block content %}
-<h1>history</h1>
+<h1 class="text-center mt-3 mb-3">รายชื่อวิชาทั้งหมด</h1>
+<table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">Subject</th>
+        <th scope="col">Year</th>
+        <th scope="col">Semester</th>
+        <th scope="col">Slot</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for subject in all_subject %}
+        <tr>
+          <th scope="row">{{subject.Subject}}</th>
+          <td>{{subject.Year}}</td>
+          <td>{{subject.Semester}}</td>
+          <td>{{subject.Slot}}</td>
+          <td>{{subject.Status}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

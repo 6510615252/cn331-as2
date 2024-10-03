@@ -8,6 +8,7 @@
     {% block title %}
     {% endblock %}
 </head>
+
 <body>
     <nav class="navbar navbar-light bg-light">
         <div class="d-flex justify-content-start w-50 ">
@@ -16,9 +17,8 @@
           <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/history">History</a>
         </div>
       </nav>
-    <div>
-        {% block content %}
-        {% endblock %}
-    </div>
+
 </body>
+{% block content %}
+{% endblock %}
 </html>
