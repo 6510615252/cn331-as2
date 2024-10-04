@@ -8,17 +8,25 @@
     {% block title %}
     {% endblock %}
 </head>
+
 <body>
     <nav class="navbar navbar-light bg-light">
-        <div class="d-flex justify-content-start w-50 ">
-          <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/">Main</a>
-          <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/request">Request</a>
-          <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/history">History</a>
+        <div class="d-flex justify-content-start w-50">
+            <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/main">Main</a>
+            <a class="btn col-2 btn-outline-success btn-warning p-2 ms-5" href="/history">History</a>
         </div>
-      </nav>
-    <div>
-        {% block content %}
-        {% endblock %}
-    </div>
+        <div class="d-flex align-items-center">
+          {% if user.is_authenticated %}
+          <h1 class="mb-0 me-3" style="font-size: 24px;">Welcome, {{ user.username }}!</h1>
+          {% endif %}
+            <form method="POST" action="{% url 'logout' %}" class="ms-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger me-3">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
 </body>
 </html>
