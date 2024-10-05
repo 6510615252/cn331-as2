@@ -24,6 +24,7 @@ class Profile(models.Model):
 class Enrollment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # เชื่อมโยงกับ User
     quota = models.ForeignKey(Quota, on_delete=models.CASCADE)  # เชื่อมโยงกับ Quota
+    approve = models.CharField(max_length = 20, default= 'Pending')
 
 
     def __str__(self):

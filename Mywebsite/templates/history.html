@@ -11,16 +11,42 @@
       <th scope="col">Subject</th>
       <th scope="col">Year</th>
       <th scope="col">Semester</th>
+      <th scope="col">Status</th>
+      <th scope="col">Cancel</th>
     </tr>
   </thead>
   <tbody>
-      {% for enrollment in all_enrollments %}
+      {% for enrollment in all_enrollment %}
       <tr>
-        <th scope="row">{{enrollment.subject.Subject}}</th>
-        <td>{{enrollment.subject.Year}}</td>
-        <td>{{enrollment.subject.Semester}}</td>
+        <td scope="row">{{enrollment.quota.Subject}}</td>
+        <td>{{enrollment.quota.Year}}</td>
+        <td>{{enrollment.quota.Semester}}</td>
+        <td scope="col">{{enrollment.approve}}</td>
+        <td>
+          <form action="{% url 'cancel_quota' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="subject_id" value="{{ enrollment.quota.id }}">
+            <input type="submit" value="ยกเลิกการขอลงทะเบียน" class="btn btn-light">
+      </form></td>
       </tr>
       {% endfor %}
+      {% if messages %}
+      {% for message in messages %}
+      <div class = 'alert alert-success' role = 'alert'>
+          <strong>{{message}}</strong>
+      </div>
+      {% endfor %}
+  {% endif %}
+  <script>setTimeout(function() {
+      const alert = document.querySelector('.alert');
+      if (alert) {
+          alert.style.transition = "opacity 0.5s ease";
+          alert.style.opacity = 0;
+          setTimeout(function() {
+              alert.remove();
+          }, 500);
+      }
+  }, 3000);</script>
   </tbody>
 </table>
 {% endblock %}

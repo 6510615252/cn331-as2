@@ -14,10 +14,12 @@ from .models import Quota, Enrollment
 # Create your views here.
 def index(request):
     all_subject = Quota.objects.all()   
-    return render(request,"main.html",{"all_subject":all_subject})
+    registered_subjects = Enrollment.objects.filter(user=request.user).values_list('quota_id', flat=True)
+    return render(request,"main.html",{"all_subject":all_subject,  'registered_subjects': registered_subjects})
 
 def history(request):
-    return render(request, 'history.html')
+    all_enrollment = Enrollment.objects.filter(user=request.user)
+    return render(request, 'history.html', {"all_enrollment":all_enrollment})
 
 def login_view(request):
     if request.method == "POST":
@@ -73,6 +75,7 @@ def register_quota(request):
                 # ถ้า Slot เหลือ 0 ให้เปลี่ยนสถานะเป็น Unavailable
                 if quota.Slot == 0:
                     quota.Status = 'Unavailable'
+                else: quota.Status = 'Available'
                 
                 quota.save()  # บันทึกการเปลี่ยนแปลง Slot และ Status ลงฐานข้อมูล
                 messages.success(request, "ลงทะเบียนเรียบร้อยแล้ว")
@@ -85,9 +88,30 @@ def register_quota(request):
 
     return redirect('main')  # ถ้าไม่ใช่ POST ก็กลับไปยังหน้าหลัก
 
+def cancel_quota(request):
+    if request.method == 'POST':
+        subject_id = request.POST.get('subject_id')
+        quota = Quota.objects.filter(id=subject_id).first()
 
+        if quota:
+            # ค้นหา Enrollment ที่ตรงกับผู้ใช้และ Quota
+            enrollment = Enrollment.objects.filter(user=request.user, quota=quota).first()
+            if enrollment:
+                # ตรวจสอบว่าสถานะเป็น 'Pending' เท่านั้น
+                if enrollment.approve == 'Pending':
+                    enrollment.delete()  # ลบ Enrollment
+                    quota.Slot += 1  # เพิ่ม Slot
+                    quota.save()  # บันทึกการเปลี่ยนแปลง Slot
+                    messages.success(request, 'ยกเลิกการลงทะเบียนแล้ว')
+                elif enrollment.approve == 'Rejected':
+                    enrollment.delete()
+                    quota.save()
+                    messages.success(request, 'ลบรายวิชาที่ถูกปฎิเสธแล้ว')
+                else:
+                    messages.error(request, 'ไม่สามารถยกเลิกได้ เนื่องจากสถานะไม่อนุญาต')
+            else: 
+                messages.error(request, 'ไม่พบการลงทะเบียนที่ต้องการยกเลิก')
 
-
-def registered_subjects(request):
-    all_enrollments = Enrollment.objects.filter(user=request.user)
-    return render(request, 'registered_subjects.html', {'all_enrollments': all_enrollments})
+            return redirect('history')
+        messages.error(request, 'ไม่พบ Quota ที่ต้องการ')
+        return redirect('history')
