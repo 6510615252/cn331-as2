@@ -115,3 +115,4 @@ def cancel_quota(request):
             return redirect('history')
         messages.error(request, 'ไม่พบ Quota ที่ต้องการ')
         return redirect('history')
+
