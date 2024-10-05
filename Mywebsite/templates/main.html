@@ -17,6 +17,7 @@
         }
 
         .table {
+            background-color: #800000; /* Blood Red color */
             font-size: 0.8rem; /* Smaller font size for the table */
         }
 
@@ -27,7 +28,8 @@
 </head>
 
 {% block content %}
-<h2 class="text-center mt-3 mb-3">รายชื่อวิชาทั้งหมด</h2>
+
+<h2 class="text-center mt-3 mb-3">วิชาที่ลงทะเบียน</h2>
 <table class="table table-dark">
     <thead>
       <tr>
@@ -46,7 +48,13 @@
           <td>{{subject.Year}}</td>
           <td>{{subject.Semester}}</td>
           <td>{{subject.Slot}}</td>  <!-- แสดงจำนวน Slot ที่เหลือ -->
-          <td>{{subject.Status}}</td>
+          <td>
+            {% if subject.Slot == 0 %}
+                Unavailable
+            {% else %}
+                {{ subject.Status }}
+            {% endif %}
+          </td>
           <td>
             <form action="{% url 'register_quota' %}" method="post">
                 {% csrf_token %}
@@ -64,21 +72,23 @@
         {% endfor %}
         {% if messages %}
         {% for message in messages %}
-        <div class = 'alert alert-success' role = 'alert'>
+        <div class='alert alert-success' role='alert'>
             <strong>{{message}}</strong>
         </div>
         {% endfor %}
-    {% endif %}
-    <script>setTimeout(function() {
-        const alert = document.querySelector('.alert');
-        if (alert) {
-            alert.style.transition = "opacity 0.5s ease";
-            alert.style.opacity = 0;
+        {% endif %}
+        <script>
             setTimeout(function() {
-                alert.remove();
-            }, 500);
-        }
-    }, 3000);</script>
+                const alert = document.querySelector('.alert');
+                if (alert) {
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = 0;
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }
+            }, 3000);
+        </script>
     </tbody>
 </table>
 {% endblock %}
