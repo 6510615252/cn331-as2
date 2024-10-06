@@ -16,9 +16,9 @@ def approve_enrollment(modeladmin, request, queryset):
 def reject_enrollment(modeladmin, request, queryset):
      for enrollment in queryset:
         enrollment.approve = 'Rejected'
-        enrollment.quota.Slot += 1  # เพิ่ม Slot เมื่อปฏิเสธ
-        enrollment.quota.save()  # บันทึกการเปลี่ยนแปลงใน Quota
-        enrollment.save()  # บันทึกการเปลี่ยนแปลงใน Enrollment
+        enrollment.quota.Slot += 1 
+        enrollment.quota.save()  
+        enrollment.save()  
 
 approve_enrollment.short_description = "Approve selected enrollments"
 reject_enrollment.short_description = "Reject selected enrollments"
@@ -26,6 +26,6 @@ reject_enrollment.short_description = "Reject selected enrollments"
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ('user', 'quota', 'approve')
     list_filter = ('approve',)
-    actions = [approve_enrollment, reject_enrollment]  # เพิ่ม action ที่สร้างขึ้น
+    actions = [approve_enrollment, reject_enrollment]  
 
 admin.site.register(Enrollment, EnrollmentAdmin)
