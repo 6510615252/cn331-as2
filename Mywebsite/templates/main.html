@@ -44,7 +44,9 @@
     <tbody>
         {% for subject in all_subject %}
         <tr>
-          <th scope="row">{{subject.Subject}}</th>
+            <th scope="row">
+                <a href="{% url 'subject_detail' subject.id %}" class="text-white">{{ subject.Subject }}</a> <!-- ลิงก์ไปยังหน้ารายละเอียดของวิชา -->
+            </th>
           <td>{{subject.Year}}</td>
           <td>{{subject.Semester}}</td>
           <td>{{subject.Slot}}</td>  <!-- แสดงจำนวน Slot ที่เหลือ -->

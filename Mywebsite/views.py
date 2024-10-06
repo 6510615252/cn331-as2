@@ -8,6 +8,9 @@ from django.contrib import admin
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Quota, Enrollment
+from django.shortcuts import render, get_object_or_404
+
+
 
 
 
@@ -115,4 +118,7 @@ def cancel_quota(request):
             return redirect('history')
         messages.error(request, 'ไม่พบ Quota ที่ต้องการ')
         return redirect('history')
-
+    
+def subject_detail(request, subject_id):
+    subject = get_object_or_404(Quota, id=subject_id)
+    return render(request, 'subject_detail.html', {'subject': subject})

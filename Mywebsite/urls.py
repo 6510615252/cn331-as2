@@ -11,7 +11,8 @@ urlpatterns = [
     path('register/', views.register),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('register_quota/', register_quota, name='register_quota'),
-    path('cancel_quota/', cancel_quota, name = 'cancel_quota')
+    path('cancel_quota/', cancel_quota, name = 'cancel_quota'),
+    path('subject/<int:subject_id>/', views.subject_detail, name='subject_detail'),
     
 
 ]
