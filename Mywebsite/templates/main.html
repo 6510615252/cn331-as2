@@ -5,24 +5,24 @@
 
 <head>
     <style>
-        /* Custom CSS for minimal font styling */
+       
         body {
-            font-family: Arial, sans-serif; /* Use a simple font */
-            font-size: 0.9rem; /* Set base font size for the page */
+            font-family: Arial, sans-serif; 
+            font-size: 0.9rem;
         }
         
         h2 {
-            font-size: 1.5rem; /* Heading size */
-            margin-bottom: 1rem; /* Space below the heading */
+            font-size: 1.5rem; 
+            margin-bottom: 1rem; 
         }
 
         .table {
-            background-color: #800000; /* Blood Red color */
-            font-size: 0.8rem; /* Smaller font size for the table */
+            background-color: #800000; 
+            font-size: 0.8rem; 
         }
 
         .btn-light, .btn-secondary {
-            font-size: 0.8rem; /* Smaller button text */
+            font-size: 0.8rem; 
         }
     </style>
 </head>
@@ -36,7 +36,7 @@
         <th scope="col">Subject</th>
         <th scope="col">Year</th>
         <th scope="col">Semester</th>
-        <th scope="col">Slot</th>  <!-- ใส่ส่วนหัวของ Slot -->
+        <th scope="col">Slot</th>  
         <th scope="col">Status</th>
         <th scope="col">Register</th>
       </tr>
@@ -45,11 +45,11 @@
         {% for subject in all_subject %}
         <tr>
             <th scope="row">
-                <a href="{% url 'subject_detail' subject.id %}" class="text-white">{{ subject.Subject }}</a> <!-- ลิงก์ไปยังหน้ารายละเอียดของวิชา -->
+                <a href="{% url 'subject_detail' subject.id %}" class="text-white">{{ subject.Subject }}</a> 
             </th>
           <td>{{subject.Year}}</td>
           <td>{{subject.Semester}}</td>
-          <td>{{subject.Slot}}</td>  <!-- แสดงจำนวน Slot ที่เหลือ -->
+          <td>{{subject.Slot}}</td>  
           <td>
             {% if subject.Slot == 0 %}
                 Unavailable

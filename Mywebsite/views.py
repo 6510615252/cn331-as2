@@ -50,8 +50,8 @@ def register(request):
         if password == confirm_password:
             try:
                 user = User.objects.create_user(username=username, password=password)
-                # สร้างโปรไฟล์ใหม่
-                Profile.objects.create(user=user)  # สร้างโปรไฟล์ให้กับผู้ใช้ใหม่
+               
+                Profile.objects.create(user=user) 
                 messages.success(request, "Registration successful. You can now log in.")
                 return redirect('login')
             except Exception as e:
@@ -64,32 +64,32 @@ def register(request):
 @login_required
 def register_quota(request):
     if request.method == 'POST':
-        subject_id = request.POST.get('subject_id')  # รับ ID ของวิชาจากฟอร์ม
-        quota = Quota.objects.filter(id=subject_id).first()  # ดึงข้อมูล Quota ที่เลือก (จะเป็น None ถ้าไม่เจอ)
+        subject_id = request.POST.get('subject_id') 
+        quota = Quota.objects.filter(id=subject_id).first()  
 
-        if quota:  # ตรวจสอบว่ามี Quota หรือไม่
-            if quota.Slot > 0:  # ตรวจสอบว่ามี Slot เหลืออยู่หรือไม่
-                # บันทึกข้อมูลการลงทะเบียน
+        if quota:  
+            if quota.Slot > 0:  
+              
                 Enrollment.objects.create(user=request.user, quota=quota)
                 
-                # ลดจำนวน Slot ลง 1
+               
                 quota.Slot -= 1
                 
-                # ถ้า Slot เหลือ 0 ให้เปลี่ยนสถานะเป็น Unavailable
+               
                 if quota.Slot == 0:
                     quota.Status = 'Unavailable'
                 else: quota.Status = 'Available'
                 
-                quota.save()  # บันทึกการเปลี่ยนแปลง Slot และ Status ลงฐานข้อมูล
+                quota.save()  
                 messages.success(request, "ลงทะเบียนเรียบร้อยแล้ว")
             else:
-                messages.error(request, "ไม่มี Slot ให้ลงทะเบียนแล้ว")  # หากไม่มี Slot
+                messages.error(request, "ไม่มี Slot ให้ลงทะเบียนแล้ว")  
         else:
             messages.error(request, "เกิดข้อผิดพลาดในการลงทะเบียน")
 
-        return redirect('main')  # เปลี่ยนไปยังหน้าอื่นหลังจากบันทึกข้อมูลเสร็จ
+        return redirect('main')  
 
-    return redirect('main')  # ถ้าไม่ใช่ POST ก็กลับไปยังหน้าหลัก
+    return redirect('main') 
 
 def cancel_quota(request):
     if request.method == 'POST':
@@ -97,14 +97,14 @@ def cancel_quota(request):
         quota = Quota.objects.filter(id=subject_id).first()
 
         if quota:
-            # ค้นหา Enrollment ที่ตรงกับผู้ใช้และ Quota
+            
             enrollment = Enrollment.objects.filter(user=request.user, quota=quota).first()
             if enrollment:
-                # ตรวจสอบว่าสถานะเป็น 'Pending' เท่านั้น
+                
                 if enrollment.approve == 'Pending':
-                    enrollment.delete()  # ลบ Enrollment
-                    quota.Slot += 1  # เพิ่ม Slot
-                    quota.save()  # บันทึกการเปลี่ยนแปลง Slot
+                    enrollment.delete() 
+                    quota.Slot += 1 
+                    quota.save() 
                     messages.success(request, 'ยกเลิกการลงทะเบียนแล้ว')
                 elif enrollment.approve == 'Rejected':
                     enrollment.delete()

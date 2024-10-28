@@ -13,7 +13,7 @@ class Quota(models.Model):
 
     def __str__(self):
         return self.Subject + " " + str(self.Year) + " " + str(self.Semester) + " " + str(self.Slot) + " " + str(self.Status)
-#eiei
+
 
 
 class Profile(models.Model):
@@ -22,8 +22,8 @@ class Profile(models.Model):
         return self.user.username
 
 class Enrollment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # เชื่อมโยงกับ User
-    quota = models.ForeignKey(Quota, on_delete=models.CASCADE)  # เชื่อมโยงกับ Quota
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  
+    quota = models.ForeignKey(Quota, on_delete=models.CASCADE) 
     approve = models.CharField(max_length = 20, default= 'Pending')
 
 
