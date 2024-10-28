@@ -13,7 +13,7 @@ class Quota(models.Model):
 
     def __str__(self):
         return self.Subject + " " + str(self.Year) + " " + str(self.Semester) + " " + str(self.Slot) + " " + str(self.Status)
-
+#eiei
 
 
 class Profile(models.Model):
