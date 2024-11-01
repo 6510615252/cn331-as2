@@ -35,7 +35,7 @@ class MyViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Invalid username or password.")
 
-    def test_register_view_with_invalid_data(self):
+    def test_register_false(self):
         """ทดสอบการลงทะเบียนเมื่อข้อมูลไม่ถูกต้อง (รหัสผ่านไม่ตรงกัน)"""
         response = self.client.post(reverse('register'), {
             'username': 'testuser',
