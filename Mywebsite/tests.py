@@ -11,7 +11,7 @@ class MyViewTests(TestCase):
         # สร้าง Quota สำหรับผู้ใช้ทดสอบ
         self.quota = Quota.objects.create(Subject='Test Subject', Year=2024, Semester=1, Slot=1, Status='Available')
 
-    def test_login_view_requires_login(self):
+    def test_login_page(self):
         # ทดสอบว่าหน้าล็อกอินสามารถเข้าถึงได้หรือไม่
         response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
@@ -25,7 +25,7 @@ class MyViewTests(TestCase):
         })
         self.assertRedirects(response, reverse('main'))  # ตรวจสอบว่าหลังจากล็อกอินแล้วถูกเปลี่ยนเส้นทางไปยังหน้า 'main'
 
-    def test_register_view_with_invalid_data(self):
+    def test_register_false(self):
         # ทดสอบการลงทะเบียนเมื่อข้อมูลไม่ถูกต้อง (รหัสผ่านไม่ตรงกัน)
         self.client.login(username='testuser', password='password')
         response = self.client.post(reverse('register'), {
@@ -77,7 +77,7 @@ class QuotaModelTest(TestCase):
             Status="Open"
         )
 
-    def test_quota_creation(self):
+    def test_quota(self):
         # ทดสอบการสร้าง Quota
         self.assertTrue(isinstance(self.quota, Quota))  # ตรวจสอบว่า Quota ถูกสร้างขึ้นอย่างถูกต้อง
         self.assertEqual(self.quota.__str__(), "Mathematics 2023 1 30 Open")  # ตรวจสอบว่าค่าที่แสดงถูกต้อง
@@ -89,7 +89,7 @@ class ProfileModelTest(TestCase):
         self.user = User.objects.create_user(username="testuser", password="password")
         self.profile = Profile.objects.create(user=self.user)
 
-    def test_profile_creation(self):
+    def test_profile(self):
         # ทดสอบการสร้างโปรไฟล์
         self.assertTrue(isinstance(self.profile, Profile))  # ตรวจสอบว่าโปรไฟล์ถูกสร้างขึ้นอย่างถูกต้อง
         self.assertEqual(self.profile.__str__(), "testuser")  # ตรวจสอบว่าค่าที่แสดงถูกต้อง
@@ -108,7 +108,7 @@ class EnrollmentModelTest(TestCase):
         )
         self.enrollment = Enrollment.objects.create(user=self.user, quota=self.quota, approve="Pending")
 
-    def test_enrollment_creation(self):
+    def test_enrollment(self):
         # ทดสอบการสร้างการลงทะเบียน
         self.assertTrue(isinstance(self.enrollment, Enrollment))  # ตรวจสอบว่าการลงทะเบียนถูกสร้างขึ้นอย่างถูกต้อง
         self.assertEqual(self.enrollment.__str__(), "testuser enrolled in Mathematics")  # ตรวจสอบว่าค่าที่แสดงถูกต้อง
@@ -175,7 +175,7 @@ class EnrollmentAdminTests(TestCase):
         self.assertEqual(self.quota.Slot, 6)  # Slot ควรเพิ่มขึ้น 1
 
 
-    def test_enrollment_display_in_admin(self):
+    def test_enrollment_admin(self):
         # เข้าสู่ระบบด้วยผู้ใช้ admin
         self.client.login(username='admin', password='password')  
         
