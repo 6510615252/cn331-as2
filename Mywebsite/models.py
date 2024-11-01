@@ -5,14 +5,15 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Quota(models.Model):
-    Subject = models.CharField(max_length = 20)
+    Subject = models.CharField(max_length=100, default='N/A')
     Year = models.IntegerField()
     Semester = models.IntegerField()
     Slot = models.IntegerField()
-    Status = models.CharField(max_length = 20)
+    Status = models.CharField(max_length=100)
 
     def __str__(self):
         return self.Subject + " " + str(self.Year) + " " + str(self.Semester) + " " + str(self.Slot) + " " + str(self.Status)
+
 
 
 
