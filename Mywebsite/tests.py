@@ -113,12 +113,38 @@ class EnrollmentModelTest(TestCase):
             Year=2023,
             Semester=1,
             Slot=30,
-            Status="Open"
+            Status="Open" 
         )
-        self.enrollment = Enrollment.objects.create(user=self.user, quota=self.quota, approve="Pending")
+    def test_cancel_no_enrollment(self):
+        """ไม่พบการลงทะเบียนในโควต้าที่ยกเลิก"""
+        response = self.client.post(reverse('cancel_quota'), {'subject_id': self.quota.id})
+        self.assertRedirects(response,reverse('history'))
+
+    def test_cancel_quota_not_found(self):
+        """ทดสอบกรณีไม่พบ Quota ที่ต้องการ"""
+        # เข้าสู่ระบบผู้ใช้
+        self.client.login(username='testuser', password='password')
+        
+        # ส่งคำขอเพื่อยกเลิก quota ที่ไม่มีอยู่ในระบบ
+        response = self.client.post(reverse('cancel_quota'), {'subject_id': 999})  # ใช้ ID ที่ไม่มีอยู่
+        
+        # ตรวจสอบการ redirect ไปยังหน้าอื่น (เช่น หน้า 'main')
+        self.assertRedirects(response, reverse('history'))
+
+    def test_cancel_quota_with_approved_status(self):
+        """ทดสอบยกเลิกการลงทะเบียนที่อนุมัติแล้ว"""
+        self.enrollment = Enrollment.objects.create(user=self.user, quota=self.quota, approve="Approve")
+        response = self.client.post(reverse('cancel_quota'), {'subject_id': self.quota.id})
+        self.assertRedirects(response, reverse('history'))  # ตรวจสอบว่าหลังจากยกเลิกถูกเปลี่ยนเส้นทางไปยังหน้า 'history'
+
+        # ตรวจสอบว่าการลงทะเบียนถูกลบและ Slot เพิ่มขึ้น
+        self.assertTrue(Enrollment.objects.filter(user=self.user, quota=self.quota).exists())
+        self.quota.refresh_from_db()
+        self.assertEqual(self.quota.Slot, 30)  # Slot ควรเพิ่มขึ้น 1
 
     def test_enrollment_creation(self):
         """ทดสอบการสร้างการลงทะเบียน"""
+        self.enrollment = Enrollment.objects.create(user=self.user, quota=self.quota, approve="Pending")
         self.assertTrue(isinstance(self.enrollment, Enrollment))  # ตรวจสอบว่าการลงทะเบียนถูกสร้างขึ้นอย่างถูกต้อง
         self.assertEqual(self.enrollment.__str__(), "testuser enrolled in Mathematics")  # ตรวจสอบว่าค่าที่แสดงถูกต้อง
         self.assertEqual(self.enrollment.approve, "Pending")  # ตรวจสอบว่าสถานะการอนุมัติถูกต้อง
@@ -126,13 +152,11 @@ class EnrollmentModelTest(TestCase):
     def test_successful_cancel_quota(self):
         """ทดสอบการยกเลิกการลงทะเบียน Quota """
         # สร้างการลงทะเบียนสำหรับผู้ใช้
-        Enrollment.objects.create(user=self.user, quota=self.quota, approve='Pending')
-
+        self.enrollment = Enrollment.objects.create(user=self.user, quota=self.quota, approve="Pending")
         response = self.client.post(reverse('cancel_quota'), {'subject_id': self.quota.id})
         self.assertRedirects(response, reverse('history'))  # ตรวจสอบว่าหลังจากยกเลิกถูกเปลี่ยนเส้นทางไปยังหน้า 'history'
-
         # ตรวจสอบว่าการลงทะเบียนถูกลบและ Slot เพิ่มขึ้น
-        self.assertTrue(Enrollment.objects.filter(user=self.user, quota=self.quota).exists())
+        self.assertFalse(Enrollment.objects.filter(user=self.user, quota=self.quota).exists())
         self.quota.refresh_from_db()
         self.assertEqual(self.quota.Slot, 31)  # Slot ควรเพิ่มขึ้น 1
 
@@ -168,37 +192,7 @@ class EnrollmentModelTest(TestCase):
         response = self.client.get(reverse('register_quota'))
         self.assertRedirects(response, reverse('main'))
 
-    def test_cancel_quota_not_found(self):
-        """ทดสอบกรณีไม่พบ Quota ที่ต้องการ"""
-        # เข้าสู่ระบบผู้ใช้
-        self.client.login(username='testuser', password='password')
-        
-        # ส่งคำขอเพื่อยกเลิก quota ที่ไม่มีอยู่ในระบบ
-        response = self.client.post(reverse('cancel_quota'), {'subject_id': 999})  # ใช้ ID ที่ไม่มีอยู่
-        
-        # ตรวจสอบการ redirect ไปยังหน้าอื่น (เช่น หน้า 'main')
-        self.assertRedirects(response, reverse('history'))
     
-# class SubjectView(TestCase):
-#     def setUp(self):
-#         self.quota = Quota.objects.create(Subject='Test Subject', Year=2024, Semester=1, Slot=1, Status='Available')
-
-#     def test_subject_detail_view_with_existing_subject(self):
-#         """ทดสอบการดึงข้อมูล subject ที่มีอยู่"""
-#         response = self.client.get(reverse('subject_detail', kwargs= {'subject_id': self.quota.id}))
-#         # ตรวจสอบว่าโหลดหน้าด้วย status code 200
-#         self.assertEqual(response.status_code, 302)
-        
-
-#     # def test_subject_detail_view_with_nonexistent_subject(self):
-#     #     """ทดสอบการดึงข้อมูล subject ที่ไม่มีอยู่ (ควร return 404)"""
-#     #     non_existent_id = self.quota.id + 1  # ใช้ id ที่ไม่มีอยู่จริง
-#     #     response = self.client.get(reverse('subject_detail', args=[non_existent_id]))
-        
-#     #     # ตรวจสอบว่า response เป็น 404 เมื่อ subject_id ไม่มีอยู่
-#     #     self.assertEqual(response.status_code, 302)
-
-        
         
 class EnrollmentAdminTests(TestCase):
 
