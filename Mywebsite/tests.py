@@ -192,7 +192,24 @@ class EnrollmentModelTest(TestCase):
         response = self.client.get(reverse('register_quota'))
         self.assertRedirects(response, reverse('main'))
 
-    
+class SubjectView(TestCase):
+    # สร้าง Quota ตัวอย่างเพื่อใช้ในการทดสอบ
+    def setUp(self):
+        self.quota = Quota.objects.create(
+            Subject="Mathematics",
+            Year=2023,
+            Semester=1,
+            Slot=30,
+            Status="Open" 
+        )
+        self.user = User.objects.create_superuser(username='admin', password='password')
+    def test_subject_detail_view_exists(self):
+            """ทดสอบว่าหน้ารายละเอียดวิชาเข้าถึงได้"""
+            self.client.login(username='admin', password='password')  
+            response = self.client.get(reverse('subject_detail', args=(self.quota.id,)))
+            self.assertEqual(response.status_code, 200)
+            
+        
         
 class EnrollmentAdminTests(TestCase):
 
