@@ -14,11 +14,12 @@ def approve_enrollment(modeladmin, request, queryset):
     queryset.update(approve='Approved')
 
 def reject_enrollment(modeladmin, request, queryset):
-     for enrollment in queryset:
-        enrollment.approve = 'Rejected'
-        enrollment.quota.Slot += 1 
-        enrollment.quota.save()  
-        enrollment.save()  
+    for enrollment in queryset:
+        enrollment.approve = 'Rejected'  # เปลี่ยนสถานะการอนุมัติ
+        enrollment.quota.Slot += 1  # เพิ่ม Slot
+        enrollment.quota.save()  # บันทึก Quota หลังจากการเปลี่ยนแปลง
+        enrollment.save()  # บันทึก Enrollment หลังจากการเปลี่ยนแปลง
+
 
 approve_enrollment.short_description = "Approve selected enrollments"
 reject_enrollment.short_description = "Reject selected enrollments"
