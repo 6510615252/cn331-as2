@@ -11,16 +11,20 @@ To set up and run the application locally, follow the steps below:
    ```bash
    git clone https://github.com/6510615252/cn331-as2.git
    ```
+### 2. **Get into Repository**
+   ```bash
+   cd cn331-as2
+   ```
 
-### 2. **Set Up the Virtual Environment**
+### 3. **Set Up the Virtual Environment**
    ```bash
    python -m venv venv
    ```
 
-### 3. **Activate the Virtual Environment**
+### 4. **Activate the Virtual Environment**
    - For Windows:
      ```bash
-     .\venv\Scripts\activate
+     . venv/Scripts/activate
      ```
    - For MacOS/Linux:
      ```bash
